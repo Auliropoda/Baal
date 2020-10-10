@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    this->installEventFilter(this);
     ui->setupUi(this);
     this->resize(800, 800);
 
@@ -29,12 +30,44 @@ MainWindow::MainWindow(QWidget *parent)
 
     hero = new Player();
     scene->addItem(hero);
-    hero->setPos(-50, 0);
+    hero->setPos(50, 50);
 }
 
-void MainWindow::keyReleaseEvent(QKeyEvent *apEvent)
+bool MainWindow::eventFilter(QObject *object, QEvent* event)
 {
+    if(event->type() == QEvent::KeyPress)
+    {
+        auto keyEvent = static_cast<QKeyEvent *>(event);
+        if(keyEvent->key() == Qt::Key_D)
+        {
+            hero->setSY(128);
+            hero->setDX(2);
+            hero->setDY(0);
+            hero->move();
+        }
+        if(keyEvent->key() == Qt::Key_A)
+        {
+            hero->setSY(192);
+            hero->setDX(-2);
+            hero->setDY(0);
+            hero->move();
+        }
+        if(keyEvent->key() == Qt::Key_W)
+        {
+            hero->setSY(64);
+            hero->setDX(0);
+            hero->setDY(-2);
+            hero->move();
+        }
+        if(keyEvent->key() == Qt::Key_S)
+        {
+            hero->setSY(0);
+            hero->setDX(0);
+            hero->setDY(2);
+            hero->move();
+        }
 
+    }
 }
 
 MainWindow::~MainWindow()

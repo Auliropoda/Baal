@@ -5,6 +5,7 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QKeyEvent>
 
 #include "Scene.h"
 #include "player.h"
@@ -21,11 +22,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+     bool eventFilter(QObject *object, QEvent* event) override;
+
 private slots:
-    void keyReleaseEvent(QKeyEvent*)override;
 
 private:
-
     QGraphicsScene *scene;
     Scene *floor;
     Player *hero;

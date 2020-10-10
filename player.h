@@ -13,6 +13,15 @@ class Player : public QObject, public QGraphicsItem
     Q_OBJECT
 public:
     explicit Player(QObject *parent = 0);
+    void setCurrentAnimationState(int i);
+
+    void move();
+    void stop();
+
+    void setDX(int i);
+    void setDY(int i);
+    void setSX(int i);
+    void setSY(int i);
 
 private slots:
     void nextFrame();
@@ -23,8 +32,13 @@ private:
 
 private:
     QTimer *playerTimer;      // Таймер для пролистывания изображения в QPixmap
-    QPixmap *playerImage;   // В данный объект QPixamp будет помещён спрайт
+    QVector<QPixmap> playerImage;   // В данный объект QPixamp будет помещён спрайт
     int currentFrame;   // Координата X, с которой начинает очередной кадр спрайта
+    int currentAnimationState;
+    int dX;
+    int dY;
+    int sY;
+    int sX;
 };
 
 #endif // PLAYER_H

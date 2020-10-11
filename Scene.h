@@ -8,6 +8,8 @@ class Scene : public QObject, public QGraphicsItem
 {
 public:
     Scene(QObject *parent = nullptr);
+    void setSX(float i = 0);
+    void setSY(float i = 0);
 
 private slots:
 
@@ -16,7 +18,10 @@ private:
     QRectF boundingRect() const override;
 
     QPixmap *sceneImage;
+    QGraphicsScene *sceneOne;
     int currentFrame;
+    float sY;
+    float sX;
 };
 
 #endif // SCENE_H

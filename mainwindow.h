@@ -23,6 +23,8 @@ public:
     ~MainWindow();
 
      bool eventFilter(QObject *object, QEvent* event) override;
+     void setRim();
+     void setWall();
 
 private slots:
 

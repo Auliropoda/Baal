@@ -33,7 +33,6 @@ private:
     QRectF boundingRect() const;
     QPainterPath shape() const;
 
-
 private:
     QTimer *playerTimer;      // Таймер для пролистывания изображения в QPixmap
     QPixmap *playerImage;   // В данный объект QPixamp будет помещён спрайт
@@ -44,6 +43,9 @@ private:
     int dY;
     int sY;
     int sX;
+
+signals:
+    void signalCheckItem(QGraphicsItem *item);
 };
 
 #endif // PLAYER_H

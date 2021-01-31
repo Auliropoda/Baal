@@ -1,8 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "food.h"
 #include <QKeyEvent>
 #include <QGraphicsScene>
+#include <cmath>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -28,6 +30,12 @@ MainWindow::MainWindow(QWidget *parent)
     hero = new Player();
     scene->addItem(hero);
     hero->setPos(300, 300);
+
+    timerFood = new QTimer();
+    connect(timerFood, &QTimer::timeout, this, &MainWindow::slotCreateFood);
+    timerFood->start(1000);
+
+    //connect(hero, &Player::signalCheckItem, this, &MainWindow::slotDeleteFood);
 }
 
 bool MainWindow::eventFilter(QObject *object, QEvent* event)
@@ -42,10 +50,18 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
             hero->setDY(0);
             hero->setCurrentAnimationState(2);
             hero->move();
-            if(!scene->collidingItems(hero).isEmpty())
+            auto items = scene->collidingItems(hero);
+            for (const auto &it : items)
             {
-                        hero->setDX(-2);
-                        hero->move();
+                if (it->type() == 1)
+                {
+                    hero->setDX(-2);
+                    hero->move();
+                }
+                else if(typeid (*it) == typeid (*food))
+                {
+                    slotDeleteFood(it);
+                }
             }
         }
         if(keyEvent->key() == Qt::Key_A) //2
@@ -56,10 +72,18 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
             hero->setCurrentAnimationState(1);
             hero->move();
 
-            if(!scene->collidingItems(hero).isEmpty())
+            auto items = scene->collidingItems(hero);
+            for (const auto &it : items)
             {
-                        hero->setDX(+2);
-                        hero->move();
+                if (it->type() == 1)
+                {
+                    hero->setDX(+2);
+                    hero->move();
+                }
+                else if(typeid (*it) == typeid (*food))
+                {
+                    slotDeleteFood(it);
+                }
             }
         }
         if(keyEvent->key() == Qt::Key_W) //3
@@ -69,11 +93,18 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
             hero->setDY(-2);
             hero->setCurrentAnimationState(3);
             hero->move();
-
-            if(!scene->collidingItems(hero).isEmpty())
+            auto items = scene->collidingItems(hero);
+            for (const auto &it : items)
             {
-                        hero->setDY(+2);
-                        hero->move();
+                if (it->type() == 1)
+                {
+                    hero->setDY(+2);
+                    hero->move();
+                }
+                else if(typeid (*it) == typeid (*food))
+                {
+                    slotDeleteFood(it);
+                }
             }
         }
         if(keyEvent->key() == Qt::Key_S) //4
@@ -83,10 +114,18 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
             hero->setDY(2);
             hero->setCurrentAnimationState(4);
             hero->move();
-            if(!scene->collidingItems(hero).isEmpty())
+            auto items = scene->collidingItems(hero);
+            for (const auto &it : items)
             {
-                        hero->setDY(-2);
-                        hero->move();
+                if (it->type() == 1)
+                {
+                    hero->setDY(-2);
+                    hero->move();
+                }
+                else if(typeid (*it) == typeid (*food))
+                {
+                    slotDeleteFood(it);
+                }
             }
         }
     }
@@ -137,26 +176,30 @@ void MainWindow::setWall()
     floor = new Scene();
     floor->setSX(33.0);
     floor->setSY(33.0);
-    scene->addItem(floor);
     floor->setPos(32, 32);
+    floor->itemType = "floor";
+    scene->addItem(std::move(floor));
 
     floor = new Scene();
     floor->setSX(231.0);
     floor->setSY(33.0);
-    scene->addItem(floor);
     floor->setPos(736, 32);
+    floor->itemType = "floor";
+    scene->addItem(std::move(floor));
 
     floor = new Scene();
     floor->setSX(33.0);
     floor->setSY(132.0);
-    scene->addItem(floor);
     floor->setPos(32, 736);
+    floor->itemType = "floor";
+    scene->addItem(std::move(floor));
 
     floor = new Scene();
     floor->setSX(231.0);
     floor->setSY(132.0);
-    scene->addItem(floor);
     floor->setPos(736, 736);
+    floor->itemType = "floor";
+    scene->addItem(std::move(floor));
 
 //upWall
     for(int i = 64; i < 736; i+=160)
@@ -164,8 +207,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(66);
         floor->setSY(33.0);
-        scene->addItem(floor);
         floor->setPos(i, 32);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 
     for(int i = 96; i < 736; i+=160)
@@ -173,8 +217,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(99);
         floor->setSY(33.0);
-        scene->addItem(floor);
         floor->setPos(i, 32);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 
     for(int i = 128; i < 736; i+=160)
@@ -182,8 +227,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(132);
         floor->setSY(33.0);
-        scene->addItem(floor);
         floor->setPos(i, 32);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 
     for(int i = 160; i < 736; i+=160)
@@ -191,8 +237,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(165);
         floor->setSY(33.0);
-        scene->addItem(floor);
         floor->setPos(i, 32);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 
     for(int i = 192; i < 736; i+=160)
@@ -200,8 +247,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(198);
         floor->setSY(33.0);
-        scene->addItem(floor);
         floor->setPos(i, 32);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 //
 
@@ -211,8 +259,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(33);
         floor->setSY(66);
-        scene->addItem(floor);
         floor->setPos(32, i);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 
     for (int i = 96; i <736; i+=64)
@@ -220,8 +269,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(33);
         floor->setSY(99);
-        scene->addItem(floor);
         floor->setPos(32, i);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 //
 
@@ -231,8 +281,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(231);
         floor->setSY(66);
-        scene->addItem(floor);
         floor->setPos(736, i);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 
     for (int i = 96; i <736; i+=64)
@@ -240,8 +291,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(231);
         floor->setSY(99);
-        scene->addItem(floor);
         floor->setPos(736, i);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 //DawnWall
     for(int i = 64; i < 736; i+=160)
@@ -249,8 +301,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(66);
         floor->setSY(132);
-        scene->addItem(floor);
         floor->setPos(i, 736);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 
     for(int i = 96; i < 736; i+=160)
@@ -258,8 +311,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(99);
         floor->setSY(132);
-        scene->addItem(floor);
         floor->setPos(i, 736);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 
     for(int i = 128; i < 736; i+=160)
@@ -267,8 +321,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(132);
         floor->setSY(132);
-        scene->addItem(floor);
         floor->setPos(i, 736);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 
     for(int i = 160; i < 736; i+=160)
@@ -276,8 +331,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(165);
         floor->setSY(132);
-        scene->addItem(floor);
         floor->setPos(i, 736);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 
     for(int i = 192; i < 736; i+=160)
@@ -285,8 +341,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(198);
         floor->setSY(132);
-        scene->addItem(floor);
         floor->setPos(i, 736);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 //
 
@@ -296,16 +353,18 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(66);
         floor->setSY(66);
-        scene->addItem(floor);
         floor->setPos(i, 64);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
     for(int i = 96; i < 736; i+=160)
     {
         floor = new Scene();
         floor->setSX(99);
         floor->setSY(66);
-        scene->addItem(floor);
         floor->setPos(i, 64);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 
     for(int i = 128; i < 736; i+=160)
@@ -313,8 +372,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(132);
         floor->setSY(66);
-        scene->addItem(floor);
         floor->setPos(i, 64);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 
     for(int i = 160; i < 736; i+=160)
@@ -322,8 +382,9 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(165);
         floor->setSY(66);
-        scene->addItem(floor);
         floor->setPos(i, 64);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 
     for(int i = 192; i < 736; i+=160)
@@ -331,37 +392,41 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(198);
         floor->setSY(66);
-        scene->addItem(floor);
         floor->setPos(i, 64);
+        floor->itemType = "floor";
+        scene->addItem(std::move(floor));
     }
 //
 
 //Ground
-    /*for(int i = 64; i < 736; i+=32)
+    for(int i = 64; i < 736; i+=32)
         for(int j = 96; j < 736; j+=32)
     {
         floor = new Scene();
         floor->setSX(66);
         floor->setSY(198);
-        scene->addItem(floor);
         floor->setPos(i, j);
+        floor->itemType = "ground";
+        scene->addItem(std::move(floor));
     }
 
-    /*for(int i = 64; i < 736; i+=32)
+    for(int i = 64; i < 736; i+=32)
     {
         floor = new Scene();
         floor->setSX(99);
         floor->setSY(198-33);
-        scene->addItem(floor);
         floor->setPos(i, 736);
+        floor->itemType = "ground";
+        scene->addItem(std::move(floor));
     }
     for(int i = 64; i < 736; i+=32)
     {
         floor = new Scene();
         floor->setSX(99);
         floor->setSY(198-33);
-        scene->addItem(floor);
         floor->setPos(i, 738);
+        floor->itemType = "ground";
+        scene->addItem(std::move(floor));
     }
 
     for(int i = 64; i < 736; i+=32)
@@ -369,14 +434,42 @@ void MainWindow::setWall()
         floor = new Scene();
         floor->setSX(99);
         floor->setSY(198-33);
-        scene->addItem(floor);
         floor->setPos(i, 740);
-    }*/
+        floor->itemType = "ground";
+        scene->addItem(std::move(floor));
+    }
 
 }
 
+void MainWindow::slotCreateFood()
+{
+    double foodX = -1.0;
+    double foodY = -1.0;
+    food = new Food();
+    do
+    {
+        foodX = qrand()%600+100;
+        foodY = qrand()%600+100;
+    }while(abs(foodX - hero->pos().x()) < 50 && abs(foodY - hero->pos().y()) < 50);
+
+    food->setPos(foodX, foodY);
+    scene->addItem(std::move(food));
+    foods.append(food);
+}
+
+void MainWindow::slotDeleteFood(QGraphicsItem * item)
+{
+    foreach (QGraphicsItem *food, foods)
+    {
+            if(food == item)
+            {
+                scene->removeItem(food);
+                foods.removeOne(item);
+                delete food;
+            }
+    }
+}
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-

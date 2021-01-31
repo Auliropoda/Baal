@@ -10,6 +10,8 @@ public:
     Scene(QObject *parent = nullptr);
     void setSX(float i = 0);
     void setSY(float i = 0);
+    int type() const override;
+    std::string itemType;
 
 private slots:
 

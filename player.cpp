@@ -14,8 +14,6 @@ Player::Player(QObject *parent) :
 
     playerImage = new QPixmap(":hero/player/Baal_Move.png");
 
-
-
     playerTimer = new QTimer();
     connect(playerTimer, &QTimer::timeout, this, &Player::nextFrame);
     playerTimer->start(120);

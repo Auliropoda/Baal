@@ -9,6 +9,7 @@
 
 #include "Scene.h"
 #include "player.h"
+#include "food.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -26,12 +27,21 @@ public:
      void setRim();
      void setWall();
 
-private slots:
+public slots:
+     void slotDeleteFood(QGraphicsItem * item);
+     void slotCreateFood();
 
 private:
     QGraphicsScene *scene;
     Scene *floor;
+    Scene *ground;
     Player *hero;
+    Food *food;
+
+    QTimer *timerFood;
+
+    QList<QGraphicsItem *> foods;
+    double score;
 
     Ui::MainWindow *ui;
 };

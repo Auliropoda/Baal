@@ -23,6 +23,13 @@ void Scene::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->drawPixmap(0.0, 0.0, 32.0, 32.0, *sceneImage, sX, sY, 32.0, 32.0);
 }
 
+int Scene::type() const
+{
+    if (itemType == "floor") return 1;
+    if (itemType == "ground") return 2;
+    return -1;
+}
+
 void Scene::setSX(float i)
 {
     sX = i;
@@ -32,5 +39,3 @@ void Scene::setSY(float i)
 {
     sY = i;
 }
-
-

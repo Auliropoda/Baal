@@ -12,6 +12,8 @@
 #include "food.h"
 #include "enemy.h"
 
+const int MAXSCORE = 5;
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE

@@ -10,6 +10,7 @@
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 
+const int SPEED = 3;
 class Player : public QObject, public QGraphicsItem
 {
     Q_OBJECT

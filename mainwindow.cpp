@@ -58,7 +58,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
         if(keyEvent->key() == Qt::Key_D) //1
         {
             hero->setSY(128);
-            hero->setDX(2);
+            hero->setDX(SPEED);
             hero->setDY(0);
             hero->setCurrentAnimationState(2);
             hero->move();
@@ -67,7 +67,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
             {
                 if (it->type() == 1)
                 {
-                    hero->setDX(-2);
+                    hero->setDX(-SPEED);
                     hero->move();
                 }
                 else if(typeid (*it) == typeid (*food))
@@ -98,7 +98,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
         if(keyEvent->key() == Qt::Key_A) //2
         {
             hero->setSY(192);
-            hero->setDX(-2);
+            hero->setDX(-SPEED);
             hero->setDY(0);
             hero->setCurrentAnimationState(1);
             hero->move();
@@ -108,7 +108,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
             {
                 if (it->type() == 1)
                 {
-                    hero->setDX(+2);
+                    hero->setDX(SPEED);
                     hero->move();
                 }
                 else if(typeid (*it) == typeid (*food))
@@ -137,7 +137,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
         {
             hero->setSY(64);
             hero->setDX(0);
-            hero->setDY(-2);
+            hero->setDY(-SPEED);
             hero->setCurrentAnimationState(3);
             hero->move();
             auto items = scene->collidingItems(hero);
@@ -145,7 +145,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
             {
                 if (it->type() == 1)
                 {
-                    hero->setDY(+2);
+                    hero->setDY(SPEED);
                     hero->move();
                 }
                 else if(typeid (*it) == typeid (*food))
@@ -175,7 +175,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
         {
             hero->setSY(0);
             hero->setDX(0);
-            hero->setDY(2);
+            hero->setDY(SPEED);
             hero->setCurrentAnimationState(4);
             hero->move();
             auto items = scene->collidingItems(hero);
@@ -183,7 +183,7 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
             {
                 if (it->type() == 1)
                 {
-                    hero->setDY(-2);
+                    hero->setDY(-SPEED);
                     hero->move();
                 }
                 else if(typeid (*it) == typeid (*food))
@@ -552,6 +552,10 @@ void MainWindow::slotDeleteFood(QGraphicsItem * item)
                 foods.removeOne(item);
                 delete food;
                 ui->lcdNumber->display(++score);
+                if(score == MAXSCORE)
+                {
+                    QMessageBox::warning(this,"Внимание","Вы победили");
+                }
             }
     }
 }

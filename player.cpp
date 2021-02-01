@@ -14,6 +14,13 @@ Player::Player(QObject *parent) :
 
     playerImage = new QPixmap(":hero/player/Baal_Move.png");
 
+    m_player = new QMediaPlayer(this);          // Инициализация плеера
+    m_playlist = new QMediaPlaylist(m_player);  // Инициализация плейлиста
+
+    m_player->setPlaylist(m_playlist);          // Установка плейлиста в аудио плеер
+    m_playlist->addMedia(QUrl("qrc:hero/player/theme.mp3"));       // Добавление трека в плейлист
+    m_playlist->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop); // Зацикливание трека
+
     playerTimer = new QTimer();
     connect(playerTimer, &QTimer::timeout, this, &Player::nextFrame);
     playerTimer->start(120);

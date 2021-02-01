@@ -10,6 +10,7 @@
 #include "Scene.h"
 #include "player.h"
 #include "food.h"
+#include "enemy.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -36,12 +37,14 @@ private:
     Scene *floor;
     Scene *ground;
     Player *hero;
-    Food *food;
+    Food *food = new Food();
+
+    QVector<Enemy*> vectorEnemy;
 
     QTimer *timerFood;
 
     QList<QGraphicsItem *> foods;
-    double score;
+    int score = 0;
 
     Ui::MainWindow *ui;
 };

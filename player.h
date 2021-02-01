@@ -7,6 +7,8 @@
 #include <QPixmap>
 #include <QPainter>
 
+#include <QMediaPlayer>
+#include <QMediaPlaylist>
 
 class Player : public QObject, public QGraphicsItem
 {
@@ -24,6 +26,9 @@ public:
     void setSY(int i);
 
     bool collide;
+
+    QMediaPlayer * m_player;
+    QMediaPlaylist * m_playlist;
 
 private slots:
     void nextFrame();

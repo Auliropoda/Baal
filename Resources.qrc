@@ -4,5 +4,7 @@
 	<file>player/Back_Ground.png</file>
 	<file>player/Baal_Move.png</file>
 	<file>player/food.png</file>
+	<file>player/enemy.png</file>
+	<file>player/theme.mp3</file>
   </qresource>
 </RCC>

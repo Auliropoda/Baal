@@ -1,10 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "food.h"
+
+#include "enemy.h"
 #include <QKeyEvent>
 #include <QGraphicsScene>
 #include <cmath>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -30,12 +32,22 @@ MainWindow::MainWindow(QWidget *parent)
     hero = new Player();
     scene->addItem(hero);
     hero->setPos(300, 300);
+    hero->m_player->play();
+
+    vectorEnemy = QVector<Enemy*>(1);
+
+    for(int i = 0; i < vectorEnemy.size(); ++i)
+    {
+        vectorEnemy[i] = new Enemy();
+        vectorEnemy[i]->setPos(qrand()%550+150, qrand()%550+150);
+        vectorEnemy[i]->setDX(3);
+        scene->addItem(vectorEnemy[i]);
+    }
+
 
     timerFood = new QTimer();
     connect(timerFood, &QTimer::timeout, this, &MainWindow::slotCreateFood);
-    timerFood->start(1000);
-
-    //connect(hero, &Player::signalCheckItem, this, &MainWindow::slotDeleteFood);
+    timerFood->start(3000);
 }
 
 bool MainWindow::eventFilter(QObject *object, QEvent* event)
@@ -61,6 +73,25 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
                 else if(typeid (*it) == typeid (*food))
                 {
                     slotDeleteFood(it);
+                } else if(typeid (*it) == typeid (*vectorEnemy[0]))
+                {
+                    QMessageBox::warning(this,"Внимание","Вы проиграли");
+                }
+            }
+
+            for(int i = 0; i < vectorEnemy.size(); ++i)
+            {
+                vectorEnemy[i]->setEnemyCurrentAnimation(1);
+                vectorEnemy[i]->move();
+
+                auto enemyItems = scene->collidingItems(vectorEnemy[i]);
+                for(const auto &it : enemyItems)
+                {
+                    if (it->type() == 1)
+                    {
+                        vectorEnemy[i]->setDX(vectorEnemy[i]->getDX()*(-1));
+                        vectorEnemy[i]->move();
+                    }
                 }
             }
         }
@@ -83,6 +114,22 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
                 else if(typeid (*it) == typeid (*food))
                 {
                     slotDeleteFood(it);
+                }  
+            }
+
+            for(int i = 0; i < vectorEnemy.size(); ++i)
+            {
+                vectorEnemy[i]->setEnemyCurrentAnimation(1);
+                vectorEnemy[i]->move();
+
+                auto enemyItems = scene->collidingItems(vectorEnemy[i]);
+                for(const auto &it : enemyItems)
+                {
+                    if (it->type() == 1)
+                    {
+                        vectorEnemy[i]->setDX(vectorEnemy[i]->getDX()*(-1));
+                        vectorEnemy[i]->move();
+                    }
                 }
             }
         }
@@ -106,7 +153,24 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
                     slotDeleteFood(it);
                 }
             }
+
+            for(int i = 0; i < vectorEnemy.size(); ++i)
+            {
+                vectorEnemy[i]->setEnemyCurrentAnimation(1);
+                vectorEnemy[i]->move();
+
+                auto enemyItems = scene->collidingItems(vectorEnemy[i]);
+                for(const auto &it : enemyItems)
+                {
+                    if (it->type() == 1)
+                    {
+                        vectorEnemy[i]->setDX(vectorEnemy[i]->getDX()*(-1));
+                        vectorEnemy[i]->move();
+                    }
+                }
+            }
         }
+
         if(keyEvent->key() == Qt::Key_S) //4
         {
             hero->setSY(0);
@@ -127,6 +191,22 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
                     slotDeleteFood(it);
                 }
             }
+
+            for(int i = 0; i < vectorEnemy.size(); ++i)
+            {
+                vectorEnemy[i]->setEnemyCurrentAnimation(1);
+                vectorEnemy[i]->move();
+
+                auto enemyItems = scene->collidingItems(vectorEnemy[i]);
+                for(const auto &it : enemyItems)
+                {
+                    if (it->type() == 1)
+                    {
+                        vectorEnemy[i]->setDX(vectorEnemy[i]->getDX()*(-1));
+                        vectorEnemy[i]->move();
+                    }
+                }
+            }
         }
     }
 
@@ -135,7 +215,12 @@ bool MainWindow::eventFilter(QObject *object, QEvent* event)
         auto keyEvent = static_cast<QKeyEvent *>(event);
         if(keyEvent->key() == Qt::Key_D || keyEvent->key() == Qt::Key_A
                 || keyEvent->key() == Qt::Key_S || keyEvent->key() == Qt::Key_W)
+        {
             hero->stop();
+
+            for(int i = 0; i < vectorEnemy.size(); ++i)
+            vectorEnemy[i]->stop();
+        }
     }
 }
 
@@ -450,7 +535,7 @@ void MainWindow::slotCreateFood()
     {
         foodX = qrand()%600+100;
         foodY = qrand()%600+100;
-    }while(abs(foodX - hero->pos().x()) < 50 && abs(foodY - hero->pos().y()) < 50);
+    }while(abs(foodX - hero->pos().x()) < 68 && abs(foodY - hero->pos().y()) < 68);
 
     food->setPos(foodX, foodY);
     scene->addItem(std::move(food));
@@ -466,10 +551,14 @@ void MainWindow::slotDeleteFood(QGraphicsItem * item)
                 scene->removeItem(food);
                 foods.removeOne(item);
                 delete food;
+                ui->lcdNumber->display(++score);
             }
     }
 }
+
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+
